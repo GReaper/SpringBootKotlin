@@ -20,3 +20,20 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# IntelliJ
+*.iml
+.idea
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+
+# Testapp
+/testapp/out/*
+
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
