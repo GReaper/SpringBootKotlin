@@ -10,5 +10,5 @@ import org.springframework.web.bind.annotation.RestController
 class SampleController {
 
     @RequestMapping("/")
-    internal fun home(): String = "Hello World!"
+    internal fun home(): String = "Hello world Kotlin!"
 }

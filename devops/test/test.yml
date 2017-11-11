@@ -1,0 +1,15 @@
+sbk_mongodb_test:
+  image: 'sbk_mongodb:1.0.0'
+  environment:
+    - MONGODB_ADMIN_USER=testroot
+    - MONGODB_ADMIN_PASS=testroot1234
+    - MONGODB_APPLICATION_DATABASE=test
+    - MONGODB_APPLICATION_USER=test
+    - MONGODB_APPLICATION_PASS=test1234
+  ports:
+    - '5600:27017'
+  privileged: true
+  volumes:
+    - '~/environment/springbootkotlin/test/mongodb/data:/data/db'
+  restart: always
+
