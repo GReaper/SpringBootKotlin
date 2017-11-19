@@ -1,52 +1,52 @@
 package integration
 
 import application.SpringKotlinApplication
+import configuration.MongoConfiguration
 import dal.UsersCommandRepository
 import models.User
+import org.junit.After
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.testng.Assert
-import org.testng.annotations.Test
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.BasicQuery
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.testng.AbstractTestNGSpringContextTests
-import org.testng.annotations.AfterMethod
-import org.testng.annotations.BeforeMethod
+import org.springframework.test.context.junit4.SpringRunner
 
+@RunWith(SpringRunner::class)
 @SpringBootTest(classes = arrayOf(SpringKotlinApplication::class))
-@DirtiesContext
-@EnableMongoRepositories
-@ContextConfiguration(classes = arrayOf(UsersCommandRepository::class))
-class UsersCommandRepositoryIntegrationTest: AbstractTestNGSpringContextTests() {
+@EnableMongoRepositories(basePackageClasses = arrayOf(UsersCommandRepository::class))
+@ContextConfiguration(classes = arrayOf(MongoConfiguration::class))
+class UsersCommandRepositoryIntegrationTest {
     @Autowired
     lateinit var mongoTemplate: MongoTemplate
 
     @Autowired
     lateinit var sut: UsersCommandRepository
 
-    @BeforeMethod
+    @Before
     fun setUp() {
-
     }
 
-    @AfterMethod
+    @After
     fun tearDown() {
-        mongoTemplate.dropCollection(sut.getUserCollectionName())
+        mongoTemplate.dropCollection(UsersCommandRepository.getUserCollectionName())
     }
 
     @Test
     fun test_insert_calledWithValidUser_userCorrectlyStored() {
         val user = User(id = null, email = "test@mail.com", pwd = "testpwd")
-        val count: Long = mongoTemplate.count(BasicQuery("{}"), sut.getUserCollectionName())
-        Assert.assertEquals(count, 0, "guard -- users collection must be empty")
+        val count: Long = mongoTemplate.count(BasicQuery("{}"), UsersCommandRepository.getUserCollectionName())
+        Assert.assertEquals(0, count)
         sut.insert(user)
-        val result: List<User> = mongoTemplate.findAll(User::class.java, sut.getUserCollectionName())
+        val result: List<User> = mongoTemplate.findAll(User::class.java, UsersCommandRepository.getUserCollectionName())
         var actual = ""
         result.forEach { it -> actual += it.email }
         val expected = "testmail.com"
-        Assert.assertEquals(actual, expected)
+        Assert.assertEquals(expected, actual)
     }
 }

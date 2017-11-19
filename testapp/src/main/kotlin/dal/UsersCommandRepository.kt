@@ -6,5 +6,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface UsersCommandRepository: MongoRepository<User, String> {
-    fun getUserCollectionName(): String = "users"
+    companion object {
+        fun getUserCollectionName(): String = "users"
+    }
 }

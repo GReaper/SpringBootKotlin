@@ -1,8 +1,8 @@
 package unit
 
 import controllers.SampleController
-import org.testng.Assert
-import org.testng.annotations.Test
+import org.junit.Assert
+import org.junit.Test
 
 class SampleControllerUnitTest {
 
@@ -11,6 +11,6 @@ class SampleControllerUnitTest {
         val sut = SampleController()
         val actual = sut.home()
         val expected = "Hello world Kotlin!"
-        Assert.assertEquals(actual, expected)
+        Assert.assertEquals(expected, actual)
     }
 }
