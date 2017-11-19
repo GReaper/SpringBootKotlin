@@ -34,19 +34,19 @@ class UsersCommandRepositoryIntegrationTest {
 
     @After
     fun tearDown() {
-        mongoTemplate.dropCollection(UsersCommandRepository.getUserCollectionName())
+        mongoTemplate.dropCollection(UsersCommandRepository.USERS_COLLECTION)
     }
 
     @Test
     fun test_insert_calledWithValidUser_userCorrectlyStored() {
         val user = User(id = null, email = "test@mail.com", pwd = "testpwd")
-        val count: Long = mongoTemplate.count(BasicQuery("{}"), UsersCommandRepository.getUserCollectionName())
+        val count: Long = mongoTemplate.count(BasicQuery("{}"), UsersCommandRepository.USERS_COLLECTION)
         Assert.assertEquals(0, count)
         sut.insert(user)
-        val result: List<User> = mongoTemplate.findAll(User::class.java, UsersCommandRepository.getUserCollectionName())
+        val result: List<User> = mongoTemplate.findAll(User::class.java, UsersCommandRepository.USERS_COLLECTION)
         var actual = ""
         result.forEach { it -> actual += it.email }
-        val expected = "testmail.com"
+        val expected = "test@mail.com"
         Assert.assertEquals(expected, actual)
     }
 }
