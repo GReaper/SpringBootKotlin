@@ -3,7 +3,8 @@ package integration
 import application.SpringKotlinApplication
 import configuration.MongoConfiguration
 import dal.MongoRepositoryBase
-import dal.command.UsersCommandRepository
+import dal.query.ResourceNotFoundQueryError
+import dal.query.UsersQueryRepository
 import models.User
 import org.junit.After
 import org.junit.Assert
@@ -20,17 +21,19 @@ import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(classes = arrayOf(SpringKotlinApplication::class))
-@EnableMongoRepositories(basePackageClasses = arrayOf(UsersCommandRepository::class))
+@EnableMongoRepositories(basePackageClasses = arrayOf(UsersQueryRepository::class))
 @ContextConfiguration(classes = arrayOf(MongoConfiguration::class))
-class UsersCommandRepositoryIntegrationTest {
+class UsersQueryRepositoryIntegrationTest {
     @Autowired
     lateinit var mongoTemplate: MongoTemplate
 
     @Autowired
-    lateinit var sut: UsersCommandRepository
+    lateinit var sut: UsersQueryRepository
 
     @Before
     fun setUp() {
+        val fixtures = arrayListOf<User>(User(id = null, email = "testquery@mail.com", pwd = "testpwd"))
+        fixtures.forEach { mongoTemplate.insert(it) }
     }
 
     @After
@@ -39,15 +42,17 @@ class UsersCommandRepositoryIntegrationTest {
     }
 
     @Test
-    fun test_insert_calledWithValidUser_userCorrectlyStored() {
-        val user = User(id = null, email = "test@mail.com", pwd = "testpwd")
-        val count: Long = mongoTemplate.count(BasicQuery("{}"), MongoRepositoryBase.USERS_COLLECTION)
-        Assert.assertEquals(0, count)
-        sut.insert(user)
+    fun test_findByEmail_calledWithExistentUser_rightUserRetrieved() {
+        sut.findByEmail("testquery@mail.com")
         val result: List<User> = mongoTemplate.findAll(User::class.java, MongoRepositoryBase.USERS_COLLECTION)
         var actual = ""
         result.forEach { it -> actual += it.email }
-        val expected = "test@mail.com"
+        val expected = "testquery@mail.com"
         Assert.assertEquals(expected, actual)
+    }
+
+    @Test(expected = ResourceNotFoundQueryError::class)
+    fun test_findByEmail_calledWithNonExistentUser_raiseResourceNotFoundQueryError() {
+        sut.findByEmail("fake@mail.com")
     }
 }

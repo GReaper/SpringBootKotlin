@@ -1,5 +1,0 @@
-package dal
-
-class UsersQueryRepository {
-
-}

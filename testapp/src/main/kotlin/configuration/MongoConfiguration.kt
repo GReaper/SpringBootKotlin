@@ -4,8 +4,8 @@ import com.mongodb.Mongo
 import com.mongodb.MongoClient
 import com.mongodb.MongoCredential
 import com.mongodb.ServerAddress
-import dal.UsersCommandRepository
-import dal.UsersQueryRepository
+import dal.command.UsersCommandRepository
+import dal.query.UsersQueryRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration
